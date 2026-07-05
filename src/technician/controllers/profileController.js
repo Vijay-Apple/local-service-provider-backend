@@ -3,7 +3,7 @@ import User from "../../auth/models/userModel.js";
 export const getProfile = async (req, res) => {
     try {
         const technician = await User.findOne({
-            _id: req.user.id,
+            _id: req.user.userId,
             role: "technician",
         }).select("-password -resetPasswordToken -resetPasswordExpire");
 
@@ -41,7 +41,7 @@ export const updateProfile = async (req, res) => {
 
         const technician = await User.findOneAndUpdate(
             {
-                _id: req.user.id,
+                _id: req.user.userId,
                 role: "technician",
             },
             {

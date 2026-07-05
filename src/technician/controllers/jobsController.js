@@ -1,9 +1,9 @@
 import Job from "../models/jobsModel.js";
 
-export  const getJobs = async (req, res) => {
+export const getJobs = async (req, res) => {
     try {
         const jobs = await Job.find({
-            technician: req.user.id,
+            technician: req.user.userId,
         }).sort({ createdAt: -1 });
 
         return res.status(200).json({
@@ -17,6 +17,8 @@ export  const getJobs = async (req, res) => {
             message: error.message,
         });
     }
+
+
 };
 
 export const getJobDetails = async (req, res) => {
@@ -25,7 +27,7 @@ export const getJobDetails = async (req, res) => {
 
         const job = await Job.findOne({
             _id: jobId,
-            technician: req.user.id,
+            technician: req.user.userId,
         });
 
         if (!job) {
@@ -45,6 +47,8 @@ export const getJobDetails = async (req, res) => {
             message: error.message,
         });
     }
+
+
 };
 
 export const updateJobStatus = async (req, res) => {
@@ -63,7 +67,7 @@ export const updateJobStatus = async (req, res) => {
         const job = await Job.findOneAndUpdate(
             {
                 _id: jobId,
-                technician: req.user.id,
+                technician: req.user.userId,
             },
             {
                 status,
@@ -73,6 +77,13 @@ export const updateJobStatus = async (req, res) => {
                 new: true,
             }
         );
+
+        if (!job) {
+            return res.status(404).json({
+                success: false,
+                message: "Job not found",
+            });
+        }
 
         return res.status(200).json({
             success: true,
@@ -85,16 +96,19 @@ export const updateJobStatus = async (req, res) => {
             message: error.message,
         });
     }
+
+
 };
 
 export const acceptJob = async (req, res) => {
     try {
         const { jobId } = req.params;
 
+
         const job = await Job.findOneAndUpdate(
             {
                 _id: jobId,
-                technician: req.user.id,
+                technician: req.user.userId,
             },
             {
                 status: "Accepted",
@@ -104,6 +118,13 @@ export const acceptJob = async (req, res) => {
                 new: true,
             }
         );
+
+        if (!job) {
+            return res.status(404).json({
+                success: false,
+                message: "Job not found",
+            });
+        }
 
         return res.status(200).json({
             success: true,
@@ -116,4 +137,6 @@ export const acceptJob = async (req, res) => {
             message: error.message,
         });
     }
+
+
 };

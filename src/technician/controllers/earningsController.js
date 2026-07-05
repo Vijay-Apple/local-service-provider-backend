@@ -2,7 +2,7 @@ import Transaction from "../models/transactionModel.js";
 
 export const getEarningsSummary = async (req, res) => {
     try {
-        const technicianId = req.user.id;
+        const technicianId = req.user.userId;
 
         const transactions = await Transaction.find({
             technician: technicianId,
@@ -41,7 +41,7 @@ export const getEarningsSummary = async (req, res) => {
 export const getTransactions = async (req, res) => {
     try {
         const transactions = await Transaction.find({
-            technician: req.user.id,
+            technician: req.user.userId,
         })
             .populate("job")
             .sort({ createdAt: -1 });

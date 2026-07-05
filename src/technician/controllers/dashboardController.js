@@ -4,7 +4,7 @@ import Job from "../models/jobsModel.js";
 export const getDashboard = async (req, res) => {
     try {
         console.log("USER =>", req.user);
-        const technicianId = req.user.id;
+        const technicianId = req.user.userId;
 
         const assignedJobs = await Job.countDocuments({
             technician: technicianId,
@@ -25,7 +25,7 @@ export const getDashboard = async (req, res) => {
         const earnings = await Transaction.aggregate([
             {
                 $match: {
-                    technician: req.user._id,
+                    technician: req.user.userId,
                     status: "Paid",
                 },
             },
@@ -55,6 +55,8 @@ export const getDashboard = async (req, res) => {
             },
         });
     } catch (error) {
+        console.log("DASHBOARD ERROR =>", error);
+
         return res.status(500).json({
             success: false,
             message: error.message,

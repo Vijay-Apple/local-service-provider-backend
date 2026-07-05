@@ -5,7 +5,7 @@ import TechnicianSettings from "../models/technicianSettingsModel.js";
 export const getSettings = async (req, res) => {
     try {
         const settings = await TechnicianSettings.findOne({
-            technician: req.user.id,
+            technician: req.user.userId,
         });
 
         return res.status(200).json({
@@ -24,7 +24,7 @@ export const updateSettings = async (req, res) => {
     try {
         const settings = await TechnicianSettings.findOneAndUpdate(
             {
-                technician: req.user.id,
+                technician: req.user.userId,
             },
             req.body,
             {
@@ -61,7 +61,7 @@ export const changePassword = async (req, res) => {
             });
         }
 
-        const user = await User.findById(req.user.id).select("+password");
+        const user = await User.findById(req.user.userId).select("+password");
 
         const isMatch = await bcrypt.compare(
             currentPassword,
@@ -93,7 +93,7 @@ export const changePassword = async (req, res) => {
 
 export const deleteAccount = async (req, res) => {
     try {
-        await User.findByIdAndDelete(req.user.id);
+        await User.findByIdAndDelete(req.user.userId);
 
         return res.status(200).json({
             success: true,

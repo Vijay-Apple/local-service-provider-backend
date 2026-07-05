@@ -30,6 +30,7 @@ import {
     getSettings,
     updateSettings,
     changePassword,
+    deleteAccount,
 } from "../technician/controllers/settingsController.js";
 
 const router = express.Router();
