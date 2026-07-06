@@ -8,15 +8,16 @@ dotenv.config()
 
 const app = express();
 
-app.use(
-    cors({
-        origin: [
-            "http://localhost:5173",
-            "https://local-service-provider-dun.vercel.app/"
-        ],
-        credentials: true,
-    })
-);
+app.use(cors())
+// app.use(
+//     cors({
+//         origin: [
+//             "http://localhost:5173",
+//             "https://local-service-provider-dun.vercel.app"
+//         ],
+//         credentials: true,
+//     })
+// );
 app.use(express.json())
 
 connectDB();
