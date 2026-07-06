@@ -7,9 +7,13 @@ import cors from "cors";
 dotenv.config()
 
 const app = express();
+
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: [
+            "http://localhost:5173",
+            "https://local-service-provider-dun.vercel.app/"
+        ],
         credentials: true,
     })
 );
