@@ -229,12 +229,6 @@ router.delete(
     deleteCategory
 );
 
-/*
-========================================
-REPORTS
-========================================
-*/
-
 router.get("/reports", getDashboardReport);
 
 /*
