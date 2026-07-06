@@ -1,4 +1,4 @@
-import NotificationModel from "../../customer/models/notificationModel.js";
+import NotificationModel from "../../customer/models/Notification.js";
 export const getAllNotifications = async (req, res) => {
     try {
         const notifications = await NotificationModel.find()

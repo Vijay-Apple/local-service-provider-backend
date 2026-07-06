@@ -1,9 +1,9 @@
-import Notification from "../models/notificationModel.js";
+import Notification from "../models/Notification.js";
 
 export const getNotifications = async (req, res) => {
     try {
         const notifications = await Notification.find({
-            customer: req.user._id,
+            customer: req.user.userId,
         }).sort({ createdAt: -1 });
 
         res.status(200).json({
@@ -23,7 +23,7 @@ export const markAsRead = async (req, res) => {
         const notification = await Notification.findOneAndUpdate(
             {
                 _id: req.params.id,
-                customer: req.user._id,
+                customer: req.user.userId,
             },
             {
                 read: true,
@@ -48,7 +48,7 @@ export const markAsRead = async (req, res) => {
 export const getUnreadCount = async (req, res) => {
     try {
         const count = await Notification.countDocuments({
-            customer: req.user._id,
+            customer: req.user.userId,
             read: false,
         });
 

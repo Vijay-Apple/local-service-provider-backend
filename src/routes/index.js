@@ -3,26 +3,18 @@ import adminRoutes from "./adminRoutes.js";
 import authRoutes from "./authRoutes.js";
 import technicianRoutes from "./technicianRoutes.js";
 import customerRoutes from "./customerRoutes.js";
+import publicRoutes from "./publicRoutes.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.use("/auth", authRoutes);
+router.use("/public", publicRoutes);
 
 router.use("/admin", protect, authorize("admin"), adminRoutes);
 
-router.use(
-    "/customer",
-    protect,
-    authorize("customer"),
-    customerRoutes
-);
+router.use("/customer", protect, authorize("customer"), customerRoutes);
 
-router.use(
-    "/technician",
-    protect,
-    authorize("technician"),
-    technicianRoutes
-);
+router.use("/technician", protect, authorize("technician"), technicianRoutes);
 
 export default router;

@@ -7,18 +7,10 @@ const bookingSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
-        customerAddress: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "AddressModel"
-        },
-
-        notes: {
-            type: String,
-            default: ""
-        },
 
         service: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Service",
             required: true,
         },
 
@@ -30,13 +22,33 @@ const bookingSchema = new mongoose.Schema(
 
         bookingId: {
             type: String,
-            required: true,
             unique: true,
+            required: true,
+        },
+
+        address: {
+            type: String,
+            required: true,
+        },
+
+        city: {
+            type: String,
+            required: true,
         },
 
         bookingDate: {
             type: Date,
             required: true,
+        },
+
+        timeSlot: {
+            type: String,
+            required: true,
+        },
+
+        notes: {
+            type: String,
+            default: "",
         },
 
         amount: {

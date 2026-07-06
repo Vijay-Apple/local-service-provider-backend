@@ -1,9 +1,9 @@
-import Address from "../models/addressModel.js";
+import Address from "../models/Address.js";
 
 export const getAddresses = async (req, res) => {
     try {
         const addresses = await Address.find({
-            customer: req.user._id,
+            customer: req.user.userId,
         }).sort({ isDefault: -1 });
 
         res.status(200).json({
@@ -32,13 +32,13 @@ export const addAddress = async (req, res) => {
 
         if (isDefault) {
             await Address.updateMany(
-                { customer: req.user._id },
+                { customer: req.user.userId },
                 { isDefault: false }
             );
         }
 
         const address = await Address.create({
-            customer: req.user._id,
+            customer: req.user.userId,
             label,
             addressLine1,
             addressLine2,
@@ -64,7 +64,7 @@ export const updateAddress = async (req, res) => {
     try {
         const address = await Address.findOne({
             _id: req.params.id,
-            customer: req.user._id,
+            customer: req.user.userId,
         });
 
         if (!address) {
@@ -93,7 +93,7 @@ export const deleteAddress = async (req, res) => {
     try {
         const address = await Address.findOneAndDelete({
             _id: req.params.id,
-            customer: req.user._id,
+            customer: req.user.userId,
         });
 
         if (!address) {
@@ -118,14 +118,14 @@ export const deleteAddress = async (req, res) => {
 export const setDefaultAddress = async (req, res) => {
     try {
         await Address.updateMany(
-            { customer: req.user._id },
+            { customer: req.user.userId },
             { isDefault: false }
         );
 
         const address = await Address.findOneAndUpdate(
             {
                 _id: req.params.id,
-                customer: req.user._id,
+                customer: req.user.userId,
             },
             {
                 isDefault: true,

@@ -1,6 +1,6 @@
-import User from "../../auth/models/userModel.js";
-import Booking from "../models/bookingModel.js";
-import Payment from "../models/paymentModel.js";
+import User from "../../auth/models/User.js";
+import Booking from "../models/Booking.js";
+import Payment from "../models/Payment.js";
 
 export const getDashboardReport = async (req, res) => {
     try {

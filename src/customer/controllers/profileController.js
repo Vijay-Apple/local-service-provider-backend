@@ -1,9 +1,9 @@
-import User from "../../auth/models/userModel.js";
+import User from "../../auth/models/User.js";
 import bcrypt from "bcryptjs";
 
 export const getProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select("-password");
+        const user = await User.findById(req.user.userId).select("-password");
 
         res.status(200).json({
             success: true,
@@ -22,7 +22,7 @@ export const updateProfile = async (req, res) => {
         const { fullName, phone, city } = req.body;
 
         const user = await User.findByIdAndUpdate(
-            req.user._id,
+            req.user.userId,
             {
                 fullName,
                 phone,
@@ -49,7 +49,7 @@ export const changePassword = async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
 
-        const user = await User.findById(req.user._id).select("+password");
+        const user = await User.findById(req.user.userId).select("+password");
 
         const isMatch = await bcrypt.compare(
             currentPassword,

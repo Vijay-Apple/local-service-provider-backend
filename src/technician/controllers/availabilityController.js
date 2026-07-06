@@ -1,4 +1,4 @@
-import User from "../../auth/models/userModel.js";
+import User from "../../auth/models/User.js";
 
 export const getAvailability = async (req, res) => {
     try {

@@ -1,4 +1,4 @@
-import User from "../../auth/models/userModel.js";
+import User from "../../auth/models/User.js";
 
 export const getAllTechnicians = async (req, res) => {
     try {
@@ -71,7 +71,24 @@ export const blockTechnician = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+export const unblockTechnician = async (req, res) => {
+    try {
+        const technician = await User.findByIdAndUpdate(
+            req.params.id,
+            {
+                status: "active",
+            },
+            { new: true }
+        );
 
+        res.json({
+            success: true,
+            technician,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 // GET    /api/admin/technicians
 // GET    /api/admin/technicians/:id
 // PATCH  /api/admin/technicians/:id/approve

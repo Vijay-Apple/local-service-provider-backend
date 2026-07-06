@@ -44,6 +44,6 @@ const serviceRecordSchema = new mongoose.Schema(
 );
 
 export default mongoose.model(
-    "ServiceRecordModel",
+    "ServiceRecord",
     serviceRecordSchema
 );

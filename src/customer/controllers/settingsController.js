@@ -1,14 +1,20 @@
-import User from "../../auth/models/userModel.js";
+import User from "../../auth/models/User.js";
 
 export const getSettings = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id);
+        console.log("User:", req.user);
+
+        const user = await User.findById(req.user.userId)
+
+        console.log("Found User:", user);
 
         res.status(200).json({
             success: true,
             data: user.preferences,
         });
     } catch (error) {
+        console.error("Get Settings Error:", error);
+
         res.status(500).json({
             success: false,
             message: error.message,
@@ -19,7 +25,7 @@ export const getSettings = async (req, res) => {
 export const updateSettings = async (req, res) => {
     try {
         const user = await User.findByIdAndUpdate(
-            req.user._id,
+            req.user.userId,
             {
                 preferences: req.body,
             },
@@ -42,7 +48,7 @@ export const updateSettings = async (req, res) => {
 
 export const deleteAccount = async (req, res) => {
     try {
-        await User.findByIdAndDelete(req.user._id);
+        await User.findByIdAndDelete(req.user.userId);
 
         res.status(200).json({
             success: true,

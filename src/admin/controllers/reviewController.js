@@ -1,4 +1,4 @@
-import ServiceRecordModel from "../models/serviceModel.js";
+import ServiceRecordModel from "../models/Service.js";
 
 export const getAllReviews = async (req, res) => {
     try {

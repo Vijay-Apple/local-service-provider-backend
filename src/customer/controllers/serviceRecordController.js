@@ -1,9 +1,9 @@
-import ServiceRecord from "../models/serviceRecordModel.js";
+import ServiceRecord from "../models/ServiceRecord.js";
 
 export const getServiceRecords = async (req, res) => {
     try {
         const records = await ServiceRecord.find({
-            customer: req.user._id,
+            customer: req.user.userId,
         })
             .populate("technician", "fullName phone")
             .sort({ completedDate: -1 });
@@ -27,7 +27,7 @@ export const getUpcomingMaintenance = async (
 ) => {
     try {
         const records = await ServiceRecord.find({
-            customer: req.user._id,
+            customer: req.user.userId,
             nextDueDate: {
                 $gte: new Date(),
             },

@@ -1,6 +1,6 @@
 
-import Transaction from "../models/transactionModel.js";
-import Job from "../models/jobsModel.js";
+import Transaction from "../models/Transaction.js";
+import Job from "../models/Job.js";
 export const getDashboard = async (req, res) => {
     try {
         console.log("USER =>", req.user);

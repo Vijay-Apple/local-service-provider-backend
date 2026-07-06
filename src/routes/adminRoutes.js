@@ -17,18 +17,31 @@ import {
     getTechnicianById,
     verifyTechnician,
     blockTechnician,
+    unblockTechnician,
 } from "../admin/controllers/technicianController.js";
+
+import {
+    getAllCustomers,
+    getCustomerById,
+    blockCustomer,
+    unblockCustomer,
+    deleteCustomer,
+} from "../admin/controllers/customerController.js";
 
 import {
     getAllBookings,
     getBookingById,
     updateBookingStatus,
     deleteBooking,
+    assignTechnician,
 } from "../admin/controllers/bookingController.js";
 
 import {
     getAllServices,
     getServiceById,
+    deleteService,
+    updateService,
+    createService,
 } from "../admin/controllers/serviceController.js";
 
 import {
@@ -53,11 +66,16 @@ import {
 } from "../admin/controllers/reportController.js";
 
 import {
+    getAnalyticsOverview,
+} from "../admin/controllers/analyticsController.js";
+
+import {
     getAllNotifications,
     sendNotification,
     deleteNotification,
 } from "../admin/controllers/notificationController.js";
 
+import { getSettings, updateSettings } from "../admin/controllers/settingsController.js";
 const router = express.Router();
 
 /*
@@ -104,6 +122,34 @@ router.patch(
     blockTechnician
 );
 
+router.patch(
+    "/technicians/:id/unblock",
+    unblockTechnician
+);
+
+/*
+========================================
+CUSTOMERS
+========================================
+*/
+router.get("/customers", getAllCustomers);
+
+router.get("/customers/:id", getCustomerById);
+
+router.patch(
+    "/customers/:id/block",
+    blockCustomer
+);
+
+router.patch(
+    "/customers/:id/unblock",
+    unblockCustomer
+);
+
+router.delete(
+    "/customers/:id",
+    deleteCustomer
+);
 /*
 ========================================
 BOOKINGS
@@ -123,7 +169,10 @@ router.delete(
     "/bookings/:id",
     deleteBooking
 );
-
+router.patch(
+    "/bookings/:id/assign-technician",
+    assignTechnician
+);
 /*
 ========================================
 SERVICES
@@ -133,6 +182,9 @@ SERVICES
 router.get("/services", getAllServices);
 
 router.get("/services/:id", getServiceById);
+router.post("/services/create", createService);
+router.put("/services/:id", updateService);
+router.delete("/services/:id", deleteService);
 
 /*
 ========================================
@@ -205,5 +257,17 @@ router.delete(
     "/notifications/:id",
     deleteNotification
 );
+
+/*
+========================================
+ANALYTICS
+========================================
+*/
+router.get("/analytics/overview", getAnalyticsOverview);
+
+
+router.get("/settings", getSettings);
+router.put("/settings", updateSettings);
+
 
 export default router;

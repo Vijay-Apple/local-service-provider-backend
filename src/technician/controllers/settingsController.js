@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import User from "../../auth/models/userModel.js";
-import TechnicianSettings from "../models/technicianSettingsModel.js";
+import User from "../../auth/models/User.js";
+import TechnicianSettings from "../models/TechnicianSetting.js";
 
 export const getSettings = async (req, res) => {
     try {

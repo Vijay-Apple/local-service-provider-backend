@@ -1,9 +1,9 @@
-import Booking from "../models/bookingModel.js";
-import ServiceRecord from "../models/serviceRecordModel.js";
+import Booking from "../../admin/models/Booking.js";
+import ServiceRecord from "../models/ServiceRecord.js";
 
 export const getDashboard = async (req, res) => {
     try {
-        const customerId = req.user._id;
+        const customerId = req.user.userId;
 
         const totalBookings = await Booking.countDocuments({
             customer: customerId,
@@ -14,6 +14,11 @@ export const getDashboard = async (req, res) => {
             status: {
                 $in: ["Pending", "Assigned", "Accepted", "In Progress"],
             },
+        });
+
+        const completedServices = await Booking.countDocuments({
+            customer: customerId,
+            status: "Completed",
         });
 
         const serviceRecords = await ServiceRecord.countDocuments({
@@ -27,13 +32,24 @@ export const getDashboard = async (req, res) => {
             },
         });
 
+        const recentBookings = await Booking.find({
+            customer: customerId,
+        })
+            .sort({ createdAt: -1 })
+            .limit(5)
+            .select(
+                "bookingId service status bookingDate amount"
+            );
+
         res.status(200).json({
             success: true,
             data: {
                 totalBookings,
                 activeServices,
+                completedServices,
                 serviceRecords,
                 reminders,
+                recentBookings,
             },
         });
     } catch (error) {

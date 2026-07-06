@@ -1,4 +1,4 @@
-import Service from "../models/serviceModel.js";
+import Service from "../models/Service.js";
 
 export const getAllServices = async (req, res) => {
     try {
@@ -31,14 +31,21 @@ export const getServiceById = async (req, res) => {
 
 export const createService = async (req, res) => {
     try {
+        console.log("BODY =>", req.body);
+
         const service = await Service.create(req.body);
 
         res.status(201).json({
             success: true,
-            service,
+            data: service,
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.log("CREATE SERVICE ERROR =>", error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
 };
 

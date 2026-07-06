@@ -1,9 +1,9 @@
-import Booking from "../models/bookingModel.js";
+import Booking from "../../admin/models/Booking.js";
 
 export const getMyBookings = async (req, res) => {
     try {
         const bookings = await Booking.find({
-            customer: req.user._id,
+            customer: req.user.userId,
         })
             .populate("technician")
             .sort({ createdAt: -1 });
@@ -25,7 +25,7 @@ export const getBookingById = async (req, res) => {
     try {
         const booking = await Booking.findOne({
             _id: req.params.id,
-            customer: req.user._id,
+            customer: req.user.userId,
         }).populate("technician");
 
         if (!booking) {
@@ -51,7 +51,7 @@ export const cancelBooking = async (req, res) => {
     try {
         const booking = await Booking.findOne({
             _id: req.params.id,
-            customer: req.user._id,
+            customer: req.user.userId,
         });
 
         if (!booking) {
