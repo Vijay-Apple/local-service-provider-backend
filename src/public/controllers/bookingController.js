@@ -4,6 +4,9 @@ import crypto from "crypto";
 
 export const createBooking = async (req, res) => {
     try {
+        console.log("BODY =", req.body);
+        console.log("USER =", req.user);
+
         const {
             serviceId,
             address,
@@ -13,7 +16,11 @@ export const createBooking = async (req, res) => {
             notes,
         } = req.body;
 
+        console.log("serviceId =", serviceId);
+
         const service = await ServiceModel.findById(serviceId);
+
+        console.log("service =", service);
 
         if (!service) {
             return res.status(404).json({
@@ -23,7 +30,7 @@ export const createBooking = async (req, res) => {
         }
 
         const booking = await Booking.create({
-            customer: req.user.id,
+            customer: req.user.userId,
             service: serviceId,
             address,
             city,
@@ -40,6 +47,8 @@ export const createBooking = async (req, res) => {
             booking,
         });
     } catch (error) {
+        console.log("BOOKING ERROR =", error);
+
         res.status(500).json({
             success: false,
             message: error.message,

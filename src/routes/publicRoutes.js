@@ -34,6 +34,16 @@ import {
     verifyPayment,
 } from "../public/controllers/paymentController.js";
 
+import { getAllCategories } from "../public/controllers/getAllCategoriesController.js";
+import {
+    getHomeSettings,
+    updateHomeSettings
+} from "../public/controllers/homeSettingsController.js";
+
+import { getFooter, updateFooter } from "../public/controllers/footerController.js";
+import { getHero, updateHero } from "../public/controllers/heroController.js";
+import { getHomeRecord, updateHomeRecord } from "../public/controllers/homeRecordController.js";
+import { getHomePage } from "../public/controllers/homeController.js";
 
 const router = express.Router();
 
@@ -56,16 +66,41 @@ router.get("/services/:serviceId/reviews", getServiceReviews);
 router.get("/reviews", getAllReviews);
 router.delete("/reviews/:id", deleteReview);
 
-
 //booking routes
-router.post("/bookings", protect, createBooking);
+router.post(
+    "/bookings",
+    protect,
+    (req, res, next) => {
+        console.log("BOOKING ROUTE HIT");
+        console.log("USER =", req.user);
+        next();
+    },
+    createBooking
+);
 router.get("/bookings", protect, getMyBookings);
 router.get("/bookings/:id", protect, getBookingDetails);
 router.patch("/bookings/:id/cancel", protect, cancelBooking);
+router.post("/bookings-test", (req, res) => {
+    res.json({
+        success: true,
+        message: "Booking route working",
+    });
+});
 
 
 //
+router.get("/categories", getAllCategories);
+router.get("/home-settings", getHomeSettings);
+router.post("/home-settings", updateHomeSettings);
+router.get("/footer", getFooter);
+router.post("/footer", updateFooter);
+router.get("/hero", getHero);
+router.post("/hero", updateHero);
+router.get("/home-record", getHomeRecord);
+router.post("/home-record", updateHomeRecord);
+router.get("/home", getHomePage);
 
+// payment routes
 router.post("/create-order", createOrder);
 router.post("/verify-payment", verifyPayment);
 
