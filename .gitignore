@@ -48,6 +48,9 @@ uploads/
 
 # Docker
 docker-compose.override.yml
+.dockerignore
+docker-compose.yml
+dockerfile
 
 # Redis dump
 dump.rdb

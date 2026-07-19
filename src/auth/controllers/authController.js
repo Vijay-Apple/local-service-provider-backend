@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto"
+import redisClient from "../../config/redis.js";
 // Register User
 export const register = async (req, res) => {
     try {
@@ -46,6 +47,7 @@ export const register = async (req, res) => {
             serviceCategory: role === "technician" ? serviceCategory : "",
             experience: role === "technician" ? experience : 0,
         });
+        await redisClient.del("all-users");
 
         res.status(201).json({
             success: true,
@@ -130,9 +132,19 @@ export const login = async (req, res) => {
 // Get All Users
 export const getAllUsers = async (req, res) => {
     try {
+        const cachedUsers = await redisClient.get("all-users")
+        if (cachedUsers) {
+            return res.status(200).json({
+                success: true,
+                users: JSON.parse(cachedUsers),
+            })
+        }
         const users = await User.find()
             .select("-password")
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean();
+
+        await redisClient.set("all-users", JSON.stringify(users), { EX: 300 })
 
         res.status(200).json({
             success: true,
@@ -150,8 +162,21 @@ export const getAllUsers = async (req, res) => {
 // Get Single User
 export const getUserById = async (req, res) => {
     try {
+        const cacheKey = `user-${req.params.id}`;
+
+        const cachedUser =
+            await redisClient.get(cacheKey);
+
+        if (cachedUser) {
+            return res.status(200).json({
+                success: true,
+                user: JSON.parse(cachedUser),
+            });
+        }
+
         const user = await User.findById(req.params.id)
-            .select("-password");
+            .select("-password")
+            .lean();
 
         if (!user) {
             return res.status(404).json({
@@ -159,6 +184,14 @@ export const getUserById = async (req, res) => {
                 message: "User not found",
             });
         }
+
+        await redisClient.set(
+            cacheKey,
+            JSON.stringify(user),
+            {
+                EX: 300,
+            }
+        );
 
         res.status(200).json({
             success: true,
@@ -171,7 +204,6 @@ export const getUserById = async (req, res) => {
         });
     }
 };
-
 // Update User
 export const updateUser = async (req, res) => {
     try {
@@ -203,6 +235,9 @@ export const updateUser = async (req, res) => {
                 runValidators: true,
             }
         ).select("-password");
+
+        await redisClient.del("all-users");
+        await redisClient.del(`user-${req.params.id}`);
 
         if (!user) {
             return res.status(404).json({
@@ -237,6 +272,9 @@ export const deleteUser = async (req, res) => {
         }
 
         await User.findByIdAndDelete(req.params.id);
+
+        await redisClient.del("all-users");
+        await redisClient.del(`user-${req.params.id}`);
 
         res.status(200).json({
             success: true,

@@ -1,5 +1,5 @@
 import Service from "../../admin/models/Service.js";
-
+import redisClient from "../../config/redis.js";
 /**
  * @desc Create Service (Admin only)
  * @route POST /api/v1/services
@@ -23,7 +23,7 @@ export const createService = async (req, res) => {
             image,
             status,
         });
-
+        await redisClient.flushAll();
         return res.status(201).json({
             success: true,
             message: "Service created successfully",
@@ -46,31 +46,47 @@ export const getAllServices = async (req, res) => {
     try {
         const { search, category, page = 1, limit = 10 } = req.query;
 
+        const cacheKey = `services:${search || "all"}:${category || "all"}:${page}:${limit}`;
+
+        const cachedData = await redisClient.get(cacheKey);
+
+        if (cachedData) {
+            console.log("✅ Redis Cache Hit");
+
+            return res.status(200).json(
+                JSON.parse(cachedData)
+            );
+        }
+
         const query = {
             status: "active",
         };
 
-        // search by name
         if (search) {
-            query.name = { $regex: search, $options: "i" };
+            query.name = {
+                $regex: search,
+                $options: "i",
+            };
         }
 
-        // filter by category
         if (category) {
             query.category = category;
         }
 
         const skip = (page - 1) * limit;
 
-        const services = await Service.find(query)
-            .populate("category", "name") // category name show
-            .skip(skip)
-            .limit(Number(limit))
-            .sort({ createdAt: -1 });
+        const [services, total] = await Promise.all([
+            Service.find(query)
+                .populate("category", "name")
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(Number(limit))
+                .lean(),
 
-        const total = await Service.countDocuments(query);
+            Service.countDocuments(query),
+        ]);
 
-        return res.status(200).json({
+        const response = {
             success: true,
             data: services,
             pagination: {
@@ -78,16 +94,24 @@ export const getAllServices = async (req, res) => {
                 page: Number(page),
                 pages: Math.ceil(total / limit),
             },
-        });
+        };
+
+        await redisClient.set(
+            cacheKey,
+            JSON.stringify(response),
+            {
+                EX: 600,
+            }
+        );
+
+        return res.status(200).json(response);
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Server Error",
-            error: error.message,
+            message: error.message,
         });
     }
 };
-
 /**
  * @desc Get Single Service
  * @route GET /api/v1/services/:id
@@ -139,7 +163,7 @@ export const updateService = async (req, res) => {
             req.body,
             { new: true }
         ).populate("category", "name");
-
+        await redisClient.flushAll();
         return res.status(200).json({
             success: true,
             message: "Service updated successfully",
@@ -170,6 +194,7 @@ export const deleteService = async (req, res) => {
         }
 
         await service.deleteOne();
+        await redisClient.flushAll();
 
         return res.status(200).json({
             success: true,

@@ -37,4 +37,7 @@ const serviceSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+serviceSchema.index({ status: 1 });
+serviceSchema.index({ category: 1 });
+serviceSchema.index({ name: "text" });
 export default mongoose.model("Service", serviceSchema);
